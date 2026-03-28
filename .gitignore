@@ -2,5 +2,5 @@
 .DS_Store
 *.local
 
-# Root package lock (only my-docs/ is the actual project)
-package-lock.json
+# Root package lock only (leading slash = root only, not my-docs/)
+/package-lock.json
