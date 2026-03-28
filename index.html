@@ -97,7 +97,7 @@
   /* ── SIDEBAR ── */
   .sidebar {
     width: var(--sidebar-w);
-    min-height: 100vh;
+    height: 100vh;
     background: var(--sidebar-bg);
     border-right: 1px solid var(--border);
     position: fixed;
@@ -106,7 +106,7 @@
     display: flex;
     flex-direction: column;
     z-index: 50;
-    transition: background var(--transition), border-color var(--transition);
+    transition: background var(--transition), border-color var(--transition), transform var(--transition);
   }
 
   .sidebar-logo {
@@ -622,6 +622,70 @@
   }
 
   .url-block-label { color: var(--muted2); font-size: 11px; white-space: nowrap; }
+
+  /* ── MOBILE HAMBURGER ── */
+  .hamburger {
+    display: none;
+    width: 34px; height: 34px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    align-items: center; justify-content: center;
+    font-size: 18px;
+    transition: all var(--transition);
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 45;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .hamburger { display: flex; }
+
+    .sidebar {
+      transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+      transform: translateX(0);
+    }
+
+    .sidebar-overlay.open { display: block; }
+
+    .topbar {
+      left: 0;
+      padding: 0 16px;
+    }
+
+    .main {
+      margin-left: 0;
+      padding-top: 52px;
+    }
+
+    .content {
+      padding: 28px 20px 60px;
+    }
+
+    .plan-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .ev-row {
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .ev-name { min-width: unset; }
+
+    h1 { font-size: 22px; }
+  }
 </style>
 </head>
 <body>
@@ -694,9 +758,13 @@
   </div>
 </aside>
 
+<!-- ── SIDEBAR OVERLAY ── -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
 <!-- ── TOPBAR ── -->
 <div class="topbar">
   <div class="topbar-left">
+    <button class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()" title="Menu">☰</button>
     <span class="topbar-bc">docs.saleslobe.com / api / v1</span>
   </div>
   <div class="topbar-right">
@@ -866,7 +934,7 @@
           </table>
         </div>
         <div class="tabs">
-          <div class="tab open" onclick="switchTab(this,'sg-req')">Request</div>
+          <div class="tab active" onclick="switchTab(this,'sg-req')">Request</div>
           <div class="tab" onclick="switchTab(this,'sg-res')">Response</div>
         </div>
         <div id="sg-req" class="tc open">
@@ -1007,7 +1075,7 @@
       <div class="card-body">
         <div class="card-meta"><span class="meta-tag mt-scope">scope: leads.write</span><span class="meta-tag mt-free">0 credits</span></div>
         <div class="tabs">
-          <div class="tab open" onclick="switchTab(this,'lp-req')">Request</div>
+          <div class="tab active" onclick="switchTab(this,'lp-req')">Request</div>
           <div class="tab" onclick="switchTab(this,'lp-res')">Response</div>
         </div>
         <div id="lp-req" class="tc open">
@@ -1184,7 +1252,7 @@
         <div class="card-meta"><span class="meta-tag mt-scope">scope: webhooks.manage</span><span class="meta-tag mt-free">0 credits</span></div>
         <div class="info purple"><span class="info-icon">ℹ</span><span>A HMAC secret is auto-generated (prefix <code>whsec_</code>). Maximum 10 webhooks per organization.</span></div>
         <div class="tabs">
-          <div class="tab open" onclick="switchTab(this,'wh-req')">Request</div>
+          <div class="tab active" onclick="switchTab(this,'wh-req')">Request</div>
           <div class="tab" onclick="switchTab(this,'wh-res')">Response</div>
         </div>
         <div id="wh-req" class="tc open">
@@ -1272,7 +1340,7 @@
   <div class="section" id="payloads">
     <h2>Event Payloads</h2>
     <div class="tabs">
-      <div class="tab open" onclick="switchTab(this,'p1')">lead.created</div>
+      <div class="tab active" onclick="switchTab(this,'p1')">lead.created</div>
       <div class="tab" onclick="switchTab(this,'p2')">lead.replied</div>
       <div class="tab" onclick="switchTab(this,'p3')">lead.updated</div>
       <div class="tab" onclick="switchTab(this,'p4')">corty.suggested</div>
@@ -1327,7 +1395,7 @@
     <h2>Signature Verification</h2>
     <p>Every webhook request includes <code>X-SalesLobe-Signature: sha256=&lt;hmac&gt;</code>. Verify it with your webhook secret to confirm the request is genuine.</p>
     <div class="tabs">
-      <div class="tab open" onclick="switchTab(this,'sig-js')">Node.js</div>
+      <div class="tab active" onclick="switchTab(this,'sig-js')">Node.js</div>
       <div class="tab" onclick="switchTab(this,'sig-py')">Python</div>
     </div>
     <div id="sig-js" class="tc open">
@@ -1423,7 +1491,7 @@
   <div class="section" id="examples">
     <h2>Code Examples</h2>
     <div class="tabs">
-      <div class="tab open" onclick="switchTab(this,'ex-js')">JavaScript</div>
+      <div class="tab active" onclick="switchTab(this,'ex-js')">JavaScript</div>
       <div class="tab" onclick="switchTab(this,'ex-py')">Python</div>
       <div class="tab" onclick="switchTab(this,'ex-curl')">curl</div>
     </div>
@@ -1579,8 +1647,8 @@ curl -X POST <span class="str">"$BASE/v1/suggest/feedback"</span> \
 
   function switchTab(clickedTab, targetId) {
     const container = clickedTab.parentElement;
-    container.querySelectorAll('.tab').forEach(t => t.classList.remove('open'));
-    clickedTab.classList.add('open');
+    container.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    clickedTab.classList.add('active');
     const parent = container.parentElement;
     parent.querySelectorAll('.tc').forEach(c => c.classList.remove('open'));
     const target = document.getElementById(targetId);
@@ -1589,3 +1657,55 @@ curl -X POST <span class="str">"$BASE/v1/suggest/feedback"</span> \
 
   function copyCode(btn) {
     const pre = btn.closest('.code-block').querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText);
+    btn.textContent = 'Copied!';
+    btn.style.color = 'var(--green)';
+    btn.style.borderColor = 'var(--green)';
+    setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
+  }
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const isDark = html.getAttribute('data-theme') === 'dark';
+    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
+  }
+
+  // Auto-detect system preference
+  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    document.getElementById('themeBtn').textContent = '☀️';
+  }
+
+  // Sidebar active link on scroll
+  const sections = document.querySelectorAll('[id]');
+  const links = document.querySelectorAll('.nav-link');
+  window.addEventListener('scroll', () => {
+    let cur = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) cur = s.id; });
+    links.forEach(l => {
+      l.classList.remove('active');
+      if (l.getAttribute('href') === '#' + cur) l.classList.add('active');
+    });
+  }, { passive: true });
+
+  // Mobile sidebar
+  function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('open');
+  }
+
+  function closeSidebar() {
+    document.querySelector('.sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('open');
+  }
+
+  // Close sidebar on nav link click (mobile)
+  document.querySelectorAll('.nav-link').forEach(l => {
+    l.addEventListener('click', () => {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
+  });
+</script>
+</body>
+</html>

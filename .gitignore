@@ -1,0 +1,6 @@
+# Misc
+.DS_Store
+*.local
+
+# Root package lock (only my-docs/ is the actual project)
+package-lock.json
