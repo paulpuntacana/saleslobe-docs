@@ -79,7 +79,7 @@ export default function ApiPlayground({ method, endpoint, baseUrl = BASE_URL, pa
       const opts: RequestInit = {
         method,
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
+          'X-SalesLobe-Key': apiKey,
           'Content-Type': 'application/json',
         },
       };
@@ -102,7 +102,7 @@ export default function ApiPlayground({ method, endpoint, baseUrl = BASE_URL, pa
   };
 
   const copyCurl = () => {
-    const headers = [`-H "Authorization: Bearer ${apiKey || '<YOUR_API_KEY>'}"`, '-H "Content-Type: application/json"'];
+    const headers = [`-H "X-SalesLobe-Key: ${apiKey || '<YOUR_API_KEY>'}"`, '-H "Content-Type: application/json"'];
     const bodyFlag = ['POST', 'PATCH'].includes(method) && body.trim() ? ` \\\n  -d '${body}'` : '';
     const curl = `curl -X ${method} \\\n  ${headers.join(' \\\n  ')} \\\n  "${fullUrl}"${bodyFlag}`;
     navigator.clipboard.writeText(curl).then(() => {
@@ -139,7 +139,7 @@ export default function ApiPlayground({ method, endpoint, baseUrl = BASE_URL, pa
           <input
             className={styles.input}
             type="password"
-            placeholder="sk_live_••••••••••••••••"
+            placeholder="sl_live_••••••••••••••••"
             value={apiKey}
             onChange={e => handleApiKey(e.target.value)}
             autoComplete="off"

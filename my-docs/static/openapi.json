@@ -1,0 +1,573 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SalesLobe API",
+    "version": "1.0.0",
+    "description": "Programmatic access to Corty's AI intelligence, your leads, campaigns, and reporting. Connect your CRM, automate workflows, or embed Corty into your own product.",
+    "contact": {
+      "name": "SalesLobe",
+      "url": "https://app.saleslobe.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://slazbvfvliieskvkjtav.supabase.co/functions/v1/api-gateway",
+      "description": "Production"
+    }
+  ],
+  "security": [
+    { "ApiKeyAuth": [] }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-SalesLobe-Key",
+        "description": "API key with prefix sl_live_, sl_test_, or sl_partner_. Generate in Settings → Connections → API Keys."
+      }
+    },
+    "schemas": {
+      "Lead": {
+        "type": "object",
+        "properties": {
+          "email":           { "type": "string", "format": "email" },
+          "name":            { "type": "string" },
+          "campaign_id":     { "type": "string", "format": "uuid" },
+          "campaign_name":   { "type": "string" },
+          "client_name":     { "type": "string" },
+          "classification":  { "type": "string", "enum": ["hot", "warm", "cold", "not_interested", "ooo"] },
+          "reply_count":     { "type": "integer" },
+          "last_reply_at":   { "type": "string", "format": "date-time" }
+        }
+      },
+      "Reply": {
+        "type": "object",
+        "properties": {
+          "id":            { "type": "string", "format": "uuid" },
+          "from_email":    { "type": "string", "format": "email" },
+          "from_name":     { "type": "string" },
+          "campaign_name": { "type": "string" },
+          "body":          { "type": "string" },
+          "classification":{ "type": "string", "enum": ["hot", "warm", "cold", "not_interested", "ooo"] },
+          "received_at":   { "type": "string", "format": "date-time" }
+        }
+      },
+      "Campaign": {
+        "type": "object",
+        "properties": {
+          "id":                  { "type": "string", "format": "uuid" },
+          "name":                { "type": "string" },
+          "status":              { "type": "string", "enum": ["active", "paused", "completed"] },
+          "sent":                { "type": "integer" },
+          "replied":             { "type": "integer" },
+          "reply_rate":          { "type": "number" },
+          "open_rate":           { "type": "number" },
+          "client":              { "type": "object", "properties": { "id": { "type": "string" }, "name": { "type": "string" } } },
+          "stats_last_synced_at":{ "type": "string", "format": "date-time" }
+        }
+      },
+      "Report": {
+        "type": "object",
+        "properties": {
+          "id":                { "type": "string", "format": "uuid" },
+          "title":             { "type": "string" },
+          "brief_type":        { "type": "string", "enum": ["friday", "monday"] },
+          "target_role":       { "type": "string" },
+          "executive_summary": { "type": "string" },
+          "summary_bullets":   { "type": "array", "items": { "type": "string" } },
+          "stats_snapshot":    { "type": "object" },
+          "period_start":      { "type": "string", "format": "date" },
+          "period_end":        { "type": "string", "format": "date" },
+          "generated_at":      { "type": "string", "format": "date-time" }
+        }
+      },
+      "Webhook": {
+        "type": "object",
+        "properties": {
+          "id":              { "type": "string" },
+          "name":            { "type": "string" },
+          "url":             { "type": "string", "format": "uri" },
+          "events":          { "type": "array", "items": { "type": "string" } },
+          "is_active":       { "type": "boolean" },
+          "failure_count":   { "type": "integer" },
+          "disabled_reason": { "type": "string", "nullable": true },
+          "created_at":      { "type": "string", "format": "date-time" }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code":    { "type": "string" },
+              "message": { "type": "string" }
+            }
+          }
+        }
+      },
+      "PaginationMeta": {
+        "type": "object",
+        "properties": {
+          "count":       { "type": "integer" },
+          "total_count": { "type": "integer" },
+          "limit":       { "type": "integer" },
+          "offset":      { "type": "integer" },
+          "has_more":    { "type": "boolean" }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/v1/leads": {
+      "get": {
+        "operationId": "listLeads",
+        "summary": "List leads",
+        "description": "List leads with filters and pagination. Leads are aggregated from replies — one lead = unique email + campaign combination.",
+        "tags": ["Leads"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [
+          { "name": "campaign_id",    "in": "query", "schema": { "type": "string", "format": "uuid" }, "description": "Filter by campaign" },
+          { "name": "classification", "in": "query", "schema": { "type": "string", "enum": ["hot", "warm", "cold", "not_interested", "ooo"] } },
+          { "name": "since",          "in": "query", "schema": { "type": "string", "format": "date-time" }, "description": "Only leads with replies after this date" },
+          { "name": "limit",          "in": "query", "schema": { "type": "integer", "default": 50, "maximum": 100 } },
+          { "name": "offset",         "in": "query", "schema": { "type": "integer", "default": 0 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "type": "object", "properties": { "leads": { "type": "array", "items": { "$ref": "#/components/schemas/Lead" } } } },
+                    { "$ref": "#/components/schemas/PaginationMeta" }
+                  ]
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } }
+        }
+      }
+    },
+    "/v1/replies/{id}": {
+      "get": {
+        "operationId": "getReply",
+        "summary": "Get reply with thread",
+        "description": "Fetch a specific reply with full thread context.",
+        "tags": ["Leads"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Reply UUID" }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "reply":         { "$ref": "#/components/schemas/Reply" },
+                    "thread":        { "type": "array", "items": { "type": "object", "properties": { "role": { "type": "string" }, "content": { "type": "string" } } } },
+                    "thread_length": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "description": "Unauthorized" },
+          "404": { "description": "Not found" }
+        }
+      }
+    },
+    "/v1/leads/{id}": {
+      "patch": {
+        "operationId": "updateLead",
+        "summary": "Update lead classification",
+        "description": "Update a lead's classification from an external system. Triggers a lead.updated webhook event.",
+        "tags": ["Leads"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Reply UUID of the lead" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "classification": { "type": "string", "enum": ["hot", "warm", "cold", "not_interested", "ooo"] },
+                  "notes":          { "type": "string" }
+                }
+              },
+              "example": { "classification": "hot", "notes": "Spoke on phone, very interested in Q2 deal" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "updated":       { "type": "boolean" },
+                    "email":         { "type": "string" },
+                    "classification":{ "type": "string" },
+                    "updated_at":    { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/replies/{id}/send": {
+      "post": {
+        "operationId": "sendReply",
+        "summary": "Send reply via Smartlead",
+        "description": "Approve a Corty suggestion and send it via Smartlead.",
+        "tags": ["Leads"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Reply UUID to respond to" }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["body"],
+                "properties": {
+                  "body":                { "type": "string", "description": "The reply text to send" },
+                  "original_suggestion": { "type": "string", "description": "Corty's original suggestion — used for learning comparison" },
+                  "edited":              { "type": "boolean", "default": false }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "sent":     { "type": "boolean" },
+                    "to_email": { "type": "string" },
+                    "learned":  { "type": "boolean" },
+                    "sent_at":  { "type": "string", "format": "date-time" }
+                  }
+                }
+              }
+            }
+          },
+          "409": { "description": "Already sent" },
+          "502": { "description": "Smartlead error" }
+        }
+      }
+    },
+    "/v1/campaigns": {
+      "get": {
+        "operationId": "listCampaigns",
+        "summary": "List campaigns",
+        "description": "List campaigns with statistics.",
+        "tags": ["Campaigns"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [
+          { "name": "status", "in": "query", "schema": { "type": "string", "enum": ["active", "paused", "completed"] } },
+          { "name": "limit",  "in": "query", "schema": { "type": "integer", "default": 50, "maximum": 100 } },
+          { "name": "offset", "in": "query", "schema": { "type": "integer", "default": 0 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "type": "object", "properties": { "campaigns": { "type": "array", "items": { "$ref": "#/components/schemas/Campaign" } } } },
+                    { "$ref": "#/components/schemas/PaginationMeta" }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reports": {
+      "get": {
+        "operationId": "listReports",
+        "summary": "List reports",
+        "description": "List available intelligence reports (Friday briefs, Monday briefs).",
+        "tags": ["Reports"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [
+          { "name": "type",   "in": "query", "schema": { "type": "string", "enum": ["friday", "monday"] } },
+          { "name": "limit",  "in": "query", "schema": { "type": "integer", "default": 20, "maximum": 50 } },
+          { "name": "offset", "in": "query", "schema": { "type": "integer", "default": 0 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "type": "object", "properties": { "reports": { "type": "array", "items": { "$ref": "#/components/schemas/Report" } } } },
+                    { "$ref": "#/components/schemas/PaginationMeta" }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reports/{id}": {
+      "get": {
+        "operationId": "getReport",
+        "summary": "Get report",
+        "description": "Fetch full report content.",
+        "tags": ["Reports"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" }, "description": "Report UUID" }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "report": { "$ref": "#/components/schemas/Report" } }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/suggest": {
+      "post": {
+        "operationId": "getSuggestion",
+        "summary": "Get AI reply suggestion",
+        "description": "Ask Corty for a reply suggestion based on lead context. Uses 1 credit.",
+        "tags": ["AI"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["reply_received"],
+                "properties": {
+                  "reply_received":    { "type": "string", "description": "The incoming reply from the lead" },
+                  "lead_name":         { "type": "string" },
+                  "lead_email":        { "type": "string", "format": "email" },
+                  "company":           { "type": "string" },
+                  "campaign_context":  { "type": "string" },
+                  "medium":            { "type": "string", "enum": ["email", "linkedin", "whatsapp"], "default": "email" },
+                  "tone":              { "type": "string" },
+                  "previous_messages": {
+                    "type": "array",
+                    "maxItems": 10,
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "role":    { "type": "string", "enum": ["outbound", "reply"] },
+                        "content": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "reply_received": "Sounds interesting, tell me more about pricing.",
+                "lead_name": "John",
+                "lead_email": "john@acme.com",
+                "company": "Acme Corp",
+                "medium": "email",
+                "campaign_context": "B2B SaaS outreach for CRM tools"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "suggestion":        { "type": "string" },
+                    "strategy":          { "type": "string" },
+                    "confidence":        { "type": "number" },
+                    "medium":            { "type": "string" },
+                    "model":             { "type": "string" },
+                    "credits_used":      { "type": "integer" },
+                    "credits_remaining": { "type": "integer" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/suggest/feedback": {
+      "post": {
+        "operationId": "sendFeedback",
+        "summary": "Send suggestion feedback",
+        "description": "Send feedback on a Corty suggestion so the system learns. Free — 0 credits.",
+        "tags": ["AI"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["accepted"],
+                "properties": {
+                  "accepted":            { "type": "boolean" },
+                  "original_suggestion": { "type": "string" },
+                  "edited_version":      { "type": "string" },
+                  "medium":              { "type": "string", "enum": ["email", "linkedin", "whatsapp"] },
+                  "client_id":           { "type": "string", "format": "uuid" },
+                  "suggestion_id":       { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "received":      { "type": "boolean" },
+                    "learned":       { "type": "boolean" },
+                    "medium":        { "type": "string" },
+                    "edit_distance": { "type": "number" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/webhooks": {
+      "get": {
+        "operationId": "listWebhooks",
+        "summary": "List webhooks",
+        "description": "List all registered webhooks.",
+        "tags": ["Webhooks"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "webhooks": { "type": "array", "items": { "$ref": "#/components/schemas/Webhook" } } }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createWebhook",
+        "summary": "Create webhook",
+        "description": "Register a webhook endpoint. Maximum 10 webhooks per organization.",
+        "tags": ["Webhooks"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "url", "events"],
+                "properties": {
+                  "name":   { "type": "string" },
+                  "url":    { "type": "string", "format": "uri" },
+                  "events": {
+                    "type": "array",
+                    "items": { "type": "string", "enum": ["lead.replied", "lead.updated", "reply.sent", "corty.suggested"] }
+                  }
+                }
+              },
+              "example": {
+                "name": "Make.com Lead Sync",
+                "url": "https://hook.make.com/abcdef123456",
+                "events": ["lead.replied", "reply.sent", "corty.suggested"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": { "webhook": { "$ref": "#/components/schemas/Webhook" } }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/webhooks/{id}": {
+      "delete": {
+        "operationId": "deleteWebhook",
+        "summary": "Delete webhook",
+        "description": "Remove a webhook permanently.",
+        "tags": ["Webhooks"],
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" }, "description": "Webhook ID (wh-...)" }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object", "properties": { "deleted": { "type": "boolean" } } }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    { "name": "Leads",     "description": "Lead management and reply handling" },
+    { "name": "Campaigns", "description": "Campaign statistics" },
+    { "name": "Reports",   "description": "Intelligence briefs" },
+    { "name": "AI",        "description": "Corty AI suggestions and learning" },
+    { "name": "Webhooks",  "description": "Event subscriptions" }
+  ]
+}

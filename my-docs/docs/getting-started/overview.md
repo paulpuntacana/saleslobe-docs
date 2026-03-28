@@ -32,3 +32,11 @@ Programmatic access to Corty's AI intelligence, your leads, campaigns, and repor
 ## API version
 
 Current version: **v1**. All endpoints are prefixed `/v1/`.
+
+## OpenAPI spec
+
+Import into Cursor, Postman, or Insomnia to get full autocomplete and type-aware AI assistance.
+
+<a href="/openapi.json" download="saleslobe-openapi.json" className="button button--primary button--sm" style={{textDecoration:'none'}}>
+  Download openapi.json
+</a>
