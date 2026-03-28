@@ -12,10 +12,29 @@ const config: Config = {
   url: 'https://docs.saleslobe.com',
   baseUrl: '/',
 
-  organizationName: 'saleslobe',
+  organizationName: 'paulpuntacana',
   projectName: 'saleslobe-docs',
 
   onBrokenLinks: 'warn',
+
+  headTags: [
+    {
+      tagName: 'meta',
+      attributes: { name: 'description', content: 'SalesLobe API documentation — leads, campaigns, AI suggestions, webhooks and more.' },
+    },
+    {
+      tagName: 'meta',
+      attributes: { property: 'og:description', content: 'SalesLobe API documentation — leads, campaigns, AI suggestions, webhooks and more.' },
+    },
+    {
+      tagName: 'meta',
+      attributes: { name: 'twitter:card', content: 'summary_large_image' },
+    },
+    {
+      tagName: 'link',
+      attributes: { rel: 'manifest', href: '/site.webmanifest' },
+    },
+  ],
 
   i18n: { defaultLocale: 'en', locales: ['en'] },
 
