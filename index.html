@@ -656,6 +656,7 @@
   <div class="sidebar-section">
     <div class="sidebar-section-label">Leads & Replies</div>
     <a class="nav-link" href="#leads-get"><span class="method-pill m-get">GET</span>/leads</a>
+    <a class="nav-link" href="#leads-post" style="opacity:0.5"><span class="method-pill m-post">POST</span>/leads</a>
     <a class="nav-link" href="#leads-patch"><span class="method-pill m-patch">PATCH</span>/leads/:id</a>
     <a class="nav-link" href="#replies-get"><span class="method-pill m-get">GET</span>/replies/:id</a>
     <a class="nav-link" href="#replies-send"><span class="method-pill m-post">POST</span>/replies/:id/send</a>
@@ -744,7 +745,7 @@
 
     <div class="info yellow">
       <span class="info-icon">⚠</span>
-      <span>API access requires the <strong>Pro</strong> or <strong>Agency</strong> plan. Keep your key secret — never expose it client-side or in public repositories.</span>
+      <span>Keep your API key secret — never expose it client-side or in public repositories. Rotate immediately if compromised.</span>
     </div>
 
     <div class="code-block">
@@ -776,7 +777,7 @@
         <tbody>
           <tr><td><span class="pn">suggest</span></td><td>POST /v1/suggest, POST /v1/suggest/feedback</td></tr>
           <tr><td><span class="pn">leads.read</span></td><td>GET /v1/leads, GET /v1/replies/:id</td></tr>
-          <tr><td><span class="pn">leads.write</span></td><td>PATCH /v1/leads/:id</td></tr>
+          <tr><td><span class="pn">leads.write</span></td><td>PATCH /v1/leads/:id (update classification)</td></tr>
           <tr><td><span class="pn">replies.send</span></td><td>POST /v1/replies/:id/send</td></tr>
           <tr><td><span class="pn">campaigns.read</span></td><td>GET /v1/campaigns</td></tr>
           <tr><td><span class="pn">reports.read</span></td><td>GET /v1/reports, GET /v1/reports/:id</td></tr>
@@ -792,26 +793,16 @@
     <div class="sec-eyebrow">Security</div>
     <h2>Rate Limits & Security</h2>
 
-    <h3>Priority tiers</h3>
-    <div class="plan-grid">
-      <div class="plan-card">
-        <div class="plan-name" style="color:var(--muted)">Pro</div>
-        <div class="plan-row">Rate limit <span class="plan-val">100/min</span></div>
-        <div class="plan-row">Daily credits <span class="plan-val">100/day</span></div>
-        <div class="plan-row">Queue <span class="plan-val">Standard</span></div>
-      </div>
-      <div class="plan-card featured">
-        <div class="plan-name" style="color:var(--accent)">Agency</div>
-        <div class="plan-row">Rate limit <span class="plan-val">500/min</span></div>
-        <div class="plan-row">Daily credits <span class="plan-val">1,000/day</span></div>
-        <div class="plan-row">Queue <span class="plan-val">High priority</span></div>
-      </div>
-      <div class="plan-card">
-        <div class="plan-name" style="color:#8b5cf6">Partner</div>
-        <div class="plan-row">Rate limit <span class="plan-val">2,000/min</span></div>
-        <div class="plan-row">Daily credits <span class="plan-val">10,000/day</span></div>
-        <div class="plan-row">Queue <span class="plan-val">Ultra priority</span></div>
-      </div>
+    <h3>Per-key limits</h3>
+    <p>Rate limits and daily credit caps are configured per API key — not per plan. You set them when generating a key in Settings → Connections → API Keys.</p>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>Limit</th><th>Default</th><th>Configurable range</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Rate limit</td><td><span class="pn">100/min</span></td><td>10 – 2,000</td><td>Requests per minute for this key</td></tr>
+          <tr><td>Daily credit limit</td><td><span class="pn">100/day</span></td><td>10 – 10,000</td><td>Max AI credits consumed per day via this key</td></tr>
+        </tbody>
+      </table>
     </div>
 
     <h3>Additional limits</h3>
@@ -884,7 +875,7 @@
             <pre>{
   <span class="prop">"reply_received"</span>: <span class="str">"Sounds interesting, tell me more about pricing."</span>,
   <span class="prop">"lead_name"</span>: <span class="str">"John"</span>,
-  <span class="prop">"lead_email"</span>: <span class="str">"john@acme.com"</span>,
+  <span class="prop">"lead_email"</span>: <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a7cdc8cfc9e7c6c4cac289c4c8ca">[email&#160;protected]</a>"</span>,
   <span class="prop">"company"</span>: <span class="str">"Acme Corp"</span>,
   <span class="prop">"medium"</span>: <span class="str">"email"</span>,
   <span class="prop">"campaign_context"</span>: <span class="str">"B2B SaaS outreach for CRM tools"</span>,
@@ -977,7 +968,7 @@
           <div class="code-header"><div class="code-label"><div class="cl-dot"></div>response — 200 OK</div></div>
           <pre>{
   <span class="prop">"leads"</span>: [{
-    <span class="prop">"email"</span>: <span class="str">"john@acme.com"</span>, <span class="prop">"name"</span>: <span class="str">"John Doe"</span>,
+    <span class="prop">"email"</span>: <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="650f0a0d0b25040608004b060a08">[email&#160;protected]</a>"</span>, <span class="prop">"name"</span>: <span class="str">"John Doe"</span>,
     <span class="prop">"campaign_id"</span>: <span class="str">"abc-123"</span>, <span class="prop">"campaign_name"</span>: <span class="str">"Q1 SaaS Outreach"</span>,
     <span class="prop">"client_name"</span>: <span class="str">"Agency Client A"</span>, <span class="prop">"classification"</span>: <span class="str">"hot"</span>,
     <span class="prop">"reply_count"</span>: <span class="num">3</span>, <span class="prop">"last_reply_at"</span>: <span class="str">"2026-03-19T14:30:00Z"</span>
@@ -989,7 +980,21 @@
     </div>
   </div>
 
-  <!-- LEADS PATCH -->
+  <!-- LEADS POST 501 -->
+  <div class="section" id="leads-post">
+    <h2>POST /v1/leads</h2>
+    <div class="card">
+      <div class="card-header">
+        <span class="method-pill m-post" style="font-size:11px;padding:3px 8px;opacity:0.5">POST</span>
+        <span class="card-path" style="color:var(--muted)">/v1/leads</span>
+        <span class="card-desc">Not yet available</span>
+      </div>
+    </div>
+    <div class="info yellow" style="margin-top:8px">
+      <span class="info-icon">⚠</span>
+      <span>Lead creation via API is not available. Leads are synced from Smartlead. This endpoint returns <code>501 not_available</code>. Standalone lead creation is planned for a future release.</span>
+    </div>
+  </div>
   <div class="section" id="leads-patch">
     <h2>PATCH /v1/leads/:id</h2>
     <p>Update a lead's classification from an external system. Triggers a <code>lead.updated</code> webhook event. The <code>:id</code> is a reply UUID — classification updates apply to all replies from this email in the same campaign.</p>
@@ -1012,7 +1017,7 @@
         </div>
         <div id="lp-res" class="tc">
           <div class="code-block"><div class="code-header"><div class="code-label"><div class="cl-dot"></div>json — 200 OK</div></div>
-            <pre>{ <span class="prop">"updated"</span>: <span class="kw">true</span>, <span class="prop">"email"</span>: <span class="str">"john@acme.com"</span>, <span class="prop">"classification"</span>: <span class="str">"hot"</span>, <span class="prop">"updated_at"</span>: <span class="str">"2026-03-21T10:00:00Z"</span> }</pre>
+            <pre>{ <span class="prop">"updated"</span>: <span class="kw">true</span>, <span class="prop">"email"</span>: <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="fb91949395bb9a98969ed5989496">[email&#160;protected]</a>"</span>, <span class="prop">"classification"</span>: <span class="str">"hot"</span>, <span class="prop">"updated_at"</span>: <span class="str">"2026-03-21T10:00:00Z"</span> }</pre>
           </div>
         </div>
       </div>
@@ -1034,7 +1039,7 @@
         <div class="code-block"><div class="code-header"><div class="code-label"><div class="cl-dot"></div>response — 200 OK</div></div>
           <pre>{
   <span class="prop">"reply"</span>: {
-    <span class="prop">"id"</span>: <span class="str">"uuid"</span>, <span class="prop">"from_email"</span>: <span class="str">"john@acme.com"</span>, <span class="prop">"from_name"</span>: <span class="str">"John Doe"</span>,
+    <span class="prop">"id"</span>: <span class="str">"uuid"</span>, <span class="prop">"from_email"</span>: <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="f3999c9b9db392909e96dd909c9e">[email&#160;protected]</a>"</span>, <span class="prop">"from_name"</span>: <span class="str">"John Doe"</span>,
     <span class="prop">"campaign_name"</span>: <span class="str">"Q1 SaaS Outreach"</span>, <span class="prop">"body"</span>: <span class="str">"Can we schedule a call?"</span>,
     <span class="prop">"classification"</span>: <span class="str">"hot"</span>, <span class="prop">"received_at"</span>: <span class="str">"2026-03-20T14:30:00Z"</span>
   },
@@ -1072,7 +1077,7 @@
           </table>
         </div>
         <div class="code-block"><div class="code-header"><div class="code-label"><div class="cl-dot"></div>response — 200 OK</div></div>
-          <pre>{ <span class="prop">"sent"</span>: <span class="kw">true</span>, <span class="prop">"to_email"</span>: <span class="str">"john@acme.com"</span>, <span class="prop">"learned"</span>: <span class="kw">true</span>, <span class="prop">"sent_at"</span>: <span class="str">"2026-03-21T10:00:00Z"</span> }</pre>
+          <pre>{ <span class="prop">"sent"</span>: <span class="kw">true</span>, <span class="prop">"to_email"</span>: <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b5dfdadddbf5d4d6d8d09bd6dad8">[email&#160;protected]</a>"</span>, <span class="prop">"learned"</span>: <span class="kw">true</span>, <span class="prop">"sent_at"</span>: <span class="str">"2026-03-21T10:00:00Z"</span> }</pre>
         </div>
         <div class="info red"><span class="info-icon">⚠</span><span>Returns <code>409 already_sent</code> if this reply was already sent. Returns <code>502 smartlead_error</code> if the Smartlead API fails.</span></div>
       </div>
@@ -1276,7 +1281,7 @@
     <div id="p1" class="tc open"><div class="code-block"><pre>{
   <span class="prop">"event"</span>: <span class="str">"lead.created"</span>, <span class="prop">"timestamp"</span>: <span class="str">"2026-03-21T10:00:00Z"</span>, <span class="prop">"workspace_id"</span>: <span class="str">"org-abc123"</span>,
   <span class="prop">"data"</span>: {
-    <span class="prop">"from_email"</span>: <span class="str">"john@acme.com"</span>, <span class="prop">"from_name"</span>: <span class="str">"John Doe"</span>,
+    <span class="prop">"from_email"</span>: <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="22484d4a4c6243414f470c414d4f">[email&#160;protected]</a>"</span>, <span class="prop">"from_name"</span>: <span class="str">"John Doe"</span>,
     <span class="prop">"campaign_id"</span>: <span class="str">"uuid"</span>, <span class="prop">"campaign_name"</span>: <span class="str">"Q1 SaaS Outreach"</span>,
     <span class="prop">"first_seen_at"</span>: <span class="str">"2026-03-21T10:00:00Z"</span>
   }
@@ -1284,7 +1289,7 @@
     <div id="p2" class="tc"><div class="code-block"><pre>{
   <span class="prop">"event"</span>: <span class="str">"lead.replied"</span>, <span class="prop">"timestamp"</span>: <span class="str">"2026-03-20T14:30:00Z"</span>, <span class="prop">"workspace_id"</span>: <span class="str">"org-abc123"</span>,
   <span class="prop">"data"</span>: {
-    <span class="prop">"reply_id"</span>: <span class="str">"uuid"</span>, <span class="prop">"from_email"</span>: <span class="str">"john@acme.com"</span>, <span class="prop">"from_name"</span>: <span class="str">"John Doe"</span>,
+    <span class="prop">"reply_id"</span>: <span class="str">"uuid"</span>, <span class="prop">"from_email"</span>: <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="93f9fcfbfdd3f2f0fef6bdf0fcfe">[email&#160;protected]</a>"</span>, <span class="prop">"from_name"</span>: <span class="str">"John Doe"</span>,
     <span class="prop">"campaign_id"</span>: <span class="str">"uuid"</span>, <span class="prop">"campaign_name"</span>: <span class="str">"Q1 SaaS Outreach"</span>,
     <span class="prop">"body"</span>: <span class="str">"Sounds interesting, can we schedule a call?"</span>,
     <span class="prop">"classification"</span>: <span class="str">"hot"</span>
@@ -1293,14 +1298,14 @@
     <div id="p3" class="tc"><div class="code-block"><pre>{
   <span class="prop">"event"</span>: <span class="str">"lead.updated"</span>, <span class="prop">"timestamp"</span>: <span class="str">"2026-03-21T10:00:00Z"</span>, <span class="prop">"workspace_id"</span>: <span class="str">"org-abc123"</span>,
   <span class="prop">"data"</span>: {
-    <span class="prop">"lead_id"</span>: <span class="str">"uuid"</span>, <span class="prop">"email"</span>: <span class="str">"john@acme.com"</span>, <span class="prop">"campaign_id"</span>: <span class="str">"uuid"</span>,
+    <span class="prop">"lead_id"</span>: <span class="str">"uuid"</span>, <span class="prop">"email"</span>: <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6f050007012f0e0c020a410c0002">[email&#160;protected]</a>"</span>, <span class="prop">"campaign_id"</span>: <span class="str">"uuid"</span>,
     <span class="prop">"classification"</span>: <span class="str">"hot"</span>, <span class="prop">"notes"</span>: <span class="str">"Spoke on phone, very interested"</span>
   }
 }</pre></div></div>
     <div id="p4" class="tc"><div class="code-block"><pre>{
   <span class="prop">"event"</span>: <span class="str">"corty.suggested"</span>, <span class="prop">"timestamp"</span>: <span class="str">"2026-03-20T14:30:00Z"</span>, <span class="prop">"workspace_id"</span>: <span class="str">"org-abc123"</span>,
   <span class="prop">"data"</span>: {
-    <span class="prop">"reply_id"</span>: <span class="str">"uuid"</span>, <span class="prop">"from_email"</span>: <span class="str">"john@acme.com"</span>, <span class="prop">"campaign_id"</span>: <span class="str">"uuid"</span>,
+    <span class="prop">"reply_id"</span>: <span class="str">"uuid"</span>, <span class="prop">"from_email"</span>: <span class="str">"<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c3a9acabad83a2a0aea6eda0acae">[email&#160;protected]</a>"</span>, <span class="prop">"campaign_id"</span>: <span class="str">"uuid"</span>,
     <span class="prop">"suggestion"</span>: <span class="str">"Hey John, thanks for your interest..."</span>,
     <span class="prop">"strategy"</span>: <span class="str">"Address pricing inquiry with value proposition"</span>,
     <span class="prop">"confidence"</span>: <span class="num">0.87</span>
@@ -1538,7 +1543,7 @@ curl -X POST <span class="str">"$BASE/v1/suggest/feedback"</span> \
   <div class="section" id="partner">
     <h2>Partner API</h2>
     <p>Embed Corty's AI directly into your own product. Your users see your interface — Corty works on the backend.</p>
-    <p>Contact <code>partners@saleslobe.com</code> for a <code>sl_partner_</code> key with scoped access (typically <code>suggest</code> only), higher rate limits, and an isolated workspace so Corty learns from your specific use case over time.</p>
+    <p>Contact <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4b3b2a393f252e39380b382a272e382724292e65282426">[email&#160;protected]</a></code> for a <code>sl_partner_</code> key with scoped access (typically <code>suggest</code> only), higher rate limits, and an isolated workspace so Corty learns from your specific use case over time.</p>
     <div class="code-block">
       <div class="code-header"><div class="code-label"><div class="cl-dot"></div>javascript — embed in your portal</div><button class="copy-btn" onclick="copyCode(this)">Copy</button></div>
       <pre><span class="cmt">// When a user receives a reply, call SalesLobe for an AI suggestion</span>
@@ -1567,7 +1572,7 @@ curl -X POST <span class="str">"$BASE/v1/suggest/feedback"</span> \
 </div>
 </main>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   function toggleCard(header) {
     header.nextElementSibling.classList.toggle('open');
   }
@@ -1584,37 +1589,3 @@ curl -X POST <span class="str">"$BASE/v1/suggest/feedback"</span> \
 
   function copyCode(btn) {
     const pre = btn.closest('.code-block').querySelector('pre');
-    navigator.clipboard.writeText(pre.innerText);
-    btn.textContent = 'Copied!';
-    btn.style.color = 'var(--green)';
-    btn.style.borderColor = 'var(--green)';
-    setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = ''; btn.style.borderColor = ''; }, 2000);
-  }
-
-  function toggleTheme() {
-    const html = document.documentElement;
-    const isDark = html.getAttribute('data-theme') === 'dark';
-    html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
-  }
-
-  // Auto-detect system preference
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', 'dark');
-    document.getElementById('themeBtn').textContent = '☀️';
-  }
-
-  // Sidebar active link
-  const sections = document.querySelectorAll('[id]');
-  const links = document.querySelectorAll('.nav-link');
-  window.addEventListener('scroll', () => {
-    let cur = '';
-    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) cur = s.id; });
-    links.forEach(l => {
-      l.classList.remove('active');
-      if (l.getAttribute('href') === '#' + cur) l.classList.add('active');
-    });
-  }, { passive: true });
-</script>
-</body>
-</html>
