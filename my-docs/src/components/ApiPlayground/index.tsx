@@ -27,7 +27,7 @@ const METHOD_COLORS: Record<Method, string> = {
   DELETE: '#ef4444',
 };
 
-const BASE_URL = 'https://api.saleslobe.com';
+const BASE_URL = 'https://slazbvfvliieskvkjtav.supabase.co/functions/v1/api-gateway';
 
 function buildUrl(base: string, endpoint: string, pathValues: Record<string,string>, queryValues: Record<string,string>): string {
   let url = base + endpoint;

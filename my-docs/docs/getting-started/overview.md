@@ -18,7 +18,7 @@ Programmatic access to Corty's AI intelligence, your leads, campaigns, and repor
 
 <div className="url-block">
   <span className="url-block-label">BASE URL</span>
-  https://api.saleslobe.com
+  https://slazbvfvliieskvkjtav.supabase.co/functions/v1/api-gateway
 </div>
 
 
