@@ -99,7 +99,7 @@ const config: Config = {
       ],
     },
     footer: {
-      copyright: `© ${new Date().getFullYear()} SalesLobe`,
+      copyright: `© 2026 <a href="https://saleslobe.com" target="_blank" rel="noopener noreferrer">SalesLobe</a>`,
     },
     prism: {
       theme: prismThemes.github,
