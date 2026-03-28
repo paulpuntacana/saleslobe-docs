@@ -2,6 +2,8 @@
 sidebar_position: 5
 ---
 
+import ApiPlayground from '@site/src/components/ApiPlayground';
+
 # POST /v1/replies/:id/send
 
 <div className="endpoint-header">
@@ -13,6 +15,21 @@ sidebar_position: 5
 <span className="tag tag-free">0 credits</span>
 
 Approve a Corty suggestion and send it via Smartlead. Closes the loop for agencies working in Make or Slack — no need to return to the SalesLobe UI.
+
+## Try it
+
+<ApiPlayground
+  method="POST"
+  endpoint="/v1/replies/{id}/send"
+  params={[
+    { name: 'id', in: 'path', required: true, description: 'Reply UUID to respond to', example: 'uuid-here' },
+  ]}
+  defaultBody={`{
+  "body": "Hey John, great to hear from you! Let's schedule a call.",
+  "original_suggestion": "Hey John, great to hear from you! Let's schedule a call.",
+  "edited": false
+}`}
+/>
 
 ## Parameters
 

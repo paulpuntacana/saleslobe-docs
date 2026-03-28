@@ -2,6 +2,8 @@
 sidebar_position: 2
 ---
 
+import ApiPlayground from '@site/src/components/ApiPlayground';
+
 # GET /v1/reports
 
 <div className="endpoint-header">
@@ -15,6 +17,18 @@ sidebar_position: 2
 List available reports.
 
 **Query params:** `type` (friday|monday), `limit` (default 20, max 50), `offset`
+
+## Try it
+
+<ApiPlayground
+  method="GET"
+  endpoint="/v1/reports"
+  params={[
+    { name: 'type', in: 'query', description: 'friday · monday' },
+    { name: 'limit', in: 'query', type: 'number', description: 'Max 50', example: '20' },
+    { name: 'offset', in: 'query', type: 'number', example: '0' },
+  ]}
+/>
 
 ## Response
 

@@ -2,6 +2,8 @@
 sidebar_position: 1
 ---
 
+import ApiPlayground from '@site/src/components/ApiPlayground';
+
 # GET /v1/campaigns
 
 <div className="endpoint-header">
@@ -15,6 +17,18 @@ sidebar_position: 1
 List campaigns with statistics.
 
 **Query params:** `status` (active|paused|completed), `limit` (default 50, max 100), `offset`
+
+## Try it
+
+<ApiPlayground
+  method="GET"
+  endpoint="/v1/campaigns"
+  params={[
+    { name: 'status', in: 'query', description: 'active · paused · completed' },
+    { name: 'limit', in: 'query', type: 'number', description: 'Max 100', example: '50' },
+    { name: 'offset', in: 'query', type: 'number', example: '0' },
+  ]}
+/>
 
 ## Response
 

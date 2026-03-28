@@ -2,6 +2,8 @@
 sidebar_position: 1
 ---
 
+import ApiPlayground from '@site/src/components/ApiPlayground';
+
 # POST /v1/suggest
 
 <div className="endpoint-header">
@@ -13,6 +15,21 @@ sidebar_position: 1
 <span className="tag tag-credit">1 credit</span>
 
 Ask Corty for a reply suggestion based on lead context. Corty draws from your workspace's learned tone profile and past edits to calibrate the response.
+
+## Try it
+
+<ApiPlayground
+  method="POST"
+  endpoint="/v1/suggest"
+  defaultBody={`{
+  "reply_received": "Sounds interesting, tell me more about pricing.",
+  "lead_name": "John",
+  "lead_email": "john@acme.com",
+  "company": "Acme Corp",
+  "medium": "email",
+  "campaign_context": "B2B SaaS outreach for CRM tools"
+}`}
+/>
 
 ## Parameters
 

@@ -2,6 +2,8 @@
 sidebar_position: 1
 ---
 
+import ApiPlayground from '@site/src/components/ApiPlayground';
+
 # POST /v1/webhooks
 
 <div className="endpoint-header">
@@ -13,6 +15,18 @@ sidebar_position: 1
 <span className="tag tag-free">0 credits</span>
 
 Register a webhook endpoint.
+
+## Try it
+
+<ApiPlayground
+  method="POST"
+  endpoint="/v1/webhooks"
+  defaultBody={`{
+  "name": "My Integration",
+  "url": "https://hook.make.com/your-webhook-url",
+  "events": ["lead.replied", "reply.sent", "corty.suggested"]
+}`}
+/>
 
 :::info
 A HMAC secret is auto-generated (prefix `whsec_`). Maximum 10 webhooks per organization.

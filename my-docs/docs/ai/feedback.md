@@ -2,6 +2,8 @@
 sidebar_position: 2
 ---
 
+import ApiPlayground from '@site/src/components/ApiPlayground';
+
 # POST /v1/suggest/feedback
 
 <div className="endpoint-header">
@@ -17,6 +19,19 @@ Send feedback on a Corty suggestion so the system learns. Essential for white-la
 :::note
 Corty only learns if the edit is less than 80% different from the original — larger rewrites are discarded.
 :::
+
+## Try it
+
+<ApiPlayground
+  method="POST"
+  endpoint="/v1/suggest/feedback"
+  defaultBody={`{
+  "accepted": true,
+  "original_suggestion": "Hey John, great that you're curious about pricing...",
+  "edited_version": "Hi John! Happy to walk you through our pricing on a quick call.",
+  "medium": "email"
+}`}
+/>
 
 ## Parameters
 

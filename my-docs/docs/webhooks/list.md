@@ -2,6 +2,8 @@
 sidebar_position: 2
 ---
 
+import ApiPlayground from '@site/src/components/ApiPlayground';
+
 # GET /v1/webhooks
 
 <div className="endpoint-header">
@@ -13,6 +15,10 @@ sidebar_position: 2
 <span className="tag tag-free">0 credits</span>
 
 List all registered webhooks.
+
+## Try it
+
+<ApiPlayground method="GET" endpoint="/v1/webhooks" />
 
 ## Response
 

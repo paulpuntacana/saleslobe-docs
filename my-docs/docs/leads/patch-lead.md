@@ -2,6 +2,8 @@
 sidebar_position: 3
 ---
 
+import ApiPlayground from '@site/src/components/ApiPlayground';
+
 # PATCH /v1/leads/:id
 
 <div className="endpoint-header">
@@ -15,6 +17,20 @@ sidebar_position: 3
 Update a lead's classification from an external system. Triggers a `lead.updated` webhook event.
 
 The `:id` is a reply UUID — classification updates apply to all replies from this email in the same campaign.
+
+## Try it
+
+<ApiPlayground
+  method="PATCH"
+  endpoint="/v1/leads/{id}"
+  params={[
+    { name: 'id', in: 'path', required: true, description: 'Reply UUID of the lead', example: 'uuid-here' },
+  ]}
+  defaultBody={`{
+  "classification": "hot",
+  "notes": "Spoke on phone, very interested"
+}`}
+/>
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';

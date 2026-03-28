@@ -2,6 +2,8 @@
 sidebar_position: 3
 ---
 
+import ApiPlayground from '@site/src/components/ApiPlayground';
+
 # GET /v1/reports/:id
 
 <div className="endpoint-header">
@@ -13,6 +15,16 @@ sidebar_position: 3
 <span className="tag tag-free">0 credits</span>
 
 Fetch full report content.
+
+## Try it
+
+<ApiPlayground
+  method="GET"
+  endpoint="/v1/reports/{id}"
+  params={[
+    { name: 'id', in: 'path', required: true, description: 'Report UUID', example: 'uuid-here' },
+  ]}
+/>
 
 ## Response
 

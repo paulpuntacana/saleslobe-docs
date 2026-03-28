@@ -2,6 +2,8 @@
 sidebar_position: 4
 ---
 
+import ApiPlayground from '@site/src/components/ApiPlayground';
+
 # GET /v1/replies/:id
 
 <div className="endpoint-header">
@@ -13,6 +15,16 @@ sidebar_position: 4
 <span className="tag tag-free">0 credits</span>
 
 Fetch a specific reply with full thread context. Useful when an external tool or LLM needs the complete conversation history to generate a response.
+
+## Try it
+
+<ApiPlayground
+  method="GET"
+  endpoint="/v1/replies/{id}"
+  params={[
+    { name: 'id', in: 'path', required: true, description: 'Reply UUID', example: 'uuid-here' },
+  ]}
+/>
 
 ## Response
 
