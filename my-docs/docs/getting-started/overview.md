@@ -37,6 +37,6 @@ Current version: **v1**. All endpoints are prefixed `/v1/`.
 
 Import into Cursor, Postman, or Insomnia to get full autocomplete and type-aware AI assistance.
 
-<a href="/openapi.json" download="saleslobe-openapi.json" className="button button--primary button--sm" style={{textDecoration:'none'}}>
-  Download openapi.json
+<a href="/openapi.json" download="saleslobe-openapi.json" style={{display:'inline-flex',alignItems:'center',gap:'7px',fontSize:'0.83rem',fontWeight:600,color:'var(--sl-accent)',textDecoration:'none',border:'1px solid rgba(122,90,248,0.3)',borderRadius:'6px',padding:'6px 14px',background:'rgba(122,90,248,0.06)'}}>
+  ↓ openapi.json
 </a>

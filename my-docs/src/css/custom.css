@@ -12,7 +12,7 @@
   --ifm-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --ifm-font-family-monospace: 'JetBrains Mono', 'SFMono-Regular', monospace;
   --ifm-code-font-size: 88%;
-  --ifm-font-size-base: 14.5px;
+  --ifm-font-size-base: 15.5px;
   --ifm-line-height-base: 1.65;
   --ifm-background-color: #f7f8fc;
   --ifm-background-surface-color: #ffffff;
@@ -57,7 +57,7 @@ p { color: var(--ifm-font-color-base); }
 /* ── Navbar ── */
 .navbar { border-bottom: 1px solid var(--ifm-toc-border-color); box-shadow: none; padding: 0 24px; }
 .navbar__brand { gap: 8px; margin-right: 4px; }
-.navbar__title { font-size: 0.92rem; font-weight: 700; color: var(--ifm-heading-color); letter-spacing: -0.01em; }
+.navbar__title { font-size: 1.05rem; font-weight: 700; color: var(--ifm-heading-color); letter-spacing: -0.01em; }
 .navbar__logo img { height: 26px; width: auto; }
 .navbar__items--right { gap: 8px; }
 
@@ -101,7 +101,7 @@ p { color: var(--ifm-font-color-base); }
 
 /* Nav links — Inter by default */
 .menu__link {
-  font-size: 0.82rem !important; font-weight: 400 !important;
+  font-size: 0.875rem !important; font-weight: 400 !important;
   color: var(--ifm-color-content-secondary) !important;
   border-radius: 5px !important; padding: 5px 10px !important;
   font-family: var(--ifm-font-family-base) !important;
@@ -114,7 +114,7 @@ p { color: var(--ifm-font-color-base); }
 .menu__link[href*="/leads/"],.menu__link[href*="/campaigns/"],
 .menu__link[href*="/webhooks/"],.menu__link[href*="/ai/"] {
   font-family: 'JetBrains Mono', monospace !important;
-  font-size: 0.78rem !important;
+  font-size: 0.82rem !important;
 }
 
 /* ── Content ── */
