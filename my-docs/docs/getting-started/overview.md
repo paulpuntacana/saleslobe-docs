@@ -9,7 +9,7 @@ hide_table_of_contents: true
 Programmatic access to Corty's AI intelligence, your leads, campaigns, and reporting. Connect your CRM, automate workflows, or embed Corty into your own product.
 
 <div className="badges">
-  <span className="badge"><span className="bdot" style={{background:'#6366f1'}}></span>REST API</span>
+  <span className="badge"><span className="bdot" style={{background:'#7A5AF8'}}></span>REST API</span>
   <span className="badge"><span className="bdot" style={{background:'#10b981'}}></span>Webhooks</span>
   <span className="badge"><span className="bdot" style={{background:'#8b5cf6'}}></span>Real-time events</span>
   <span className="badge"><span className="bdot" style={{background:'#f59e0b'}}></span>Make.com ready</span>
@@ -18,12 +18,9 @@ Programmatic access to Corty's AI intelligence, your leads, campaigns, and repor
 
 <div className="url-block">
   <span className="url-block-label">BASE URL</span>
-  https://&lt;your-project&gt;.supabase.co/functions/v1/api-gateway
+  https://api.saleslobe.com
 </div>
 
-:::info
-Custom domain `api.saleslobe.com` coming soon. All existing integrations will continue working without changes.
-:::
 
 ## What you can build
 

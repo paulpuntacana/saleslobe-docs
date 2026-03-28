@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 
 ```javascript
 const KEY  = 'sl_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
-const BASE = 'https://<your-project>.supabase.co/functions/v1/api-gateway';
+const BASE = 'https://api.saleslobe.com';
 
 async function suggest(replyText, leadName, context) {
   const res = await fetch(`${BASE}/v1/suggest`, {
@@ -50,7 +50,7 @@ async function updateLead(replyId, classification) {
 import requests
 
 KEY  = 'sl_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-BASE = 'https://<your-project>.supabase.co/functions/v1/api-gateway'
+BASE = 'https://api.saleslobe.com'
 H    = {'X-SalesLobe-Key': KEY, 'Content-Type': 'application/json'}
 
 def suggest(reply, name='', context=''):
@@ -74,7 +74,7 @@ def update_lead(reply_id, classification):
   <TabItem value="curl" label="curl">
 
 ```bash
-BASE="https://<your-project>.supabase.co/functions/v1/api-gateway"
+BASE="https://api.saleslobe.com"
 KEY="sl_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 # AI suggestion
