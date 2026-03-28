@@ -81,7 +81,7 @@ const config: Config = {
       logo: {
         alt: 'SalesLobe',
         src: 'img/logo.png',
-        style: { height: '26px', width: 'auto' },
+        style: { height: '34px', width: 'auto' },
       },
       items: [
         {
