@@ -95,9 +95,9 @@ p { color: var(--ifm-font-color-base); }
   letter-spacing: 0.09em !important; text-transform: uppercase !important;
   color: var(--ifm-color-content-secondary) !important;
   padding: 8px 12px 3px !important; margin-top: 8px !important;
-  pointer-events: none !important; background: none !important;
+  background: none !important;
 }
-.menu__caret { display: none !important; }
+.menu__caret { opacity: 0.5; }
 
 /* Nav links */
 .menu__link {
