@@ -2,6 +2,8 @@
 sidebar_position: 1
 ---
 
+import ApiPlayground from '@site/src/components/ApiPlayground';
+
 # GET /v1/leads
 
 <div className="endpoint-header">
@@ -27,6 +29,19 @@ Leads are aggregated from replies — one lead = unique email + campaign combina
 | `since` | ISO 8601 | — | Only leads with replies after this date |
 | `limit` | integer | 50 | Max 100 |
 | `offset` | integer | 0 | Pagination offset |
+
+## Try it
+
+<ApiPlayground
+  method="GET"
+  endpoint="/v1/leads"
+  params={[
+    { name: 'campaign_id', in: 'query', type: 'string', description: 'Filter by campaign UUID' },
+    { name: 'classification', in: 'query', type: 'string', description: 'hot · warm · cold · not_interested · ooo', example: 'hot' },
+    { name: 'limit', in: 'query', type: 'number', description: 'Max 100', example: '20' },
+    { name: 'offset', in: 'query', type: 'number', description: 'Pagination offset', example: '0' },
+  ]}
+/>
 
 ## Response
 

@@ -2,13 +2,13 @@
 
 /* ── Tokens ── */
 :root {
-  --ifm-color-primary: #6366f1;
-  --ifm-color-primary-dark: #4f52e8;
-  --ifm-color-primary-darker: #4346e3;
-  --ifm-color-primary-darkest: #2d30cc;
-  --ifm-color-primary-light: #7779f4;
-  --ifm-color-primary-lighter: #8385f5;
-  --ifm-color-primary-lightest: #a5a7f8;
+  --ifm-color-primary: #7A5AF8;
+  --ifm-color-primary-dark: #6347E8;
+  --ifm-color-primary-darker: #5A3EE0;
+  --ifm-color-primary-darkest: #4429CE;
+  --ifm-color-primary-light: #8D6FFB;
+  --ifm-color-primary-lighter: #9A7EFC;
+  --ifm-color-primary-lightest: #B9A4FD;
   --ifm-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --ifm-font-family-monospace: 'JetBrains Mono', 'SFMono-Regular', monospace;
   --ifm-code-font-size: 88%;
@@ -24,17 +24,17 @@
   --ifm-font-color-base: #374151;
   --ifm-color-content-secondary: #6b7280;
   --sl-green: #10b981; --sl-yellow: #f59e0b; --sl-red: #ef4444;
-  --sl-blue: #3b82f6;  --sl-accent: #6366f1;
+  --sl-blue: #3b82f6;  --sl-accent: #7A5AF8;
   --docusaurus-highlighted-code-line-bg: rgba(99,102,241,0.08);
 }
 [data-theme='dark'] {
-  --ifm-color-primary: #818cf8;
-  --ifm-color-primary-dark: #6d78f6;
-  --ifm-color-primary-darker: #6370f5;
-  --ifm-color-primary-darkest: #4451f2;
-  --ifm-color-primary-light: #95a0fa;
-  --ifm-color-primary-lighter: #a0abfb;
-  --ifm-color-primary-lightest: #bfc5fd;
+  --ifm-color-primary: #9580FF;
+  --ifm-color-primary-dark: #7A5AF8;
+  --ifm-color-primary-darker: #6F4CF5;
+  --ifm-color-primary-darkest: #5A34F0;
+  --ifm-color-primary-light: #A892FF;
+  --ifm-color-primary-lighter: #B5A2FF;
+  --ifm-color-primary-lightest: #CFC2FF;
   --ifm-background-color: #0d1117;
   --ifm-background-surface-color: #161b27;
   --ifm-navbar-background-color: #161b27;
@@ -43,7 +43,7 @@
   --ifm-font-color-base: #c9d1e0;
   --ifm-color-content-secondary: #8892a4;
   --sl-green: #34d399; --sl-yellow: #fbbf24; --sl-red: #f87171;
-  --sl-blue: #60a5fa;  --sl-accent: #818cf8;
+  --sl-blue: #60a5fa;  --sl-accent: #9580FF;
   --docusaurus-highlighted-code-line-bg: rgba(129,140,248,0.12);
 }
 
@@ -99,23 +99,22 @@ p { color: var(--ifm-font-color-base); }
 }
 .menu__caret { opacity: 0.5; }
 
-/* Nav links */
+/* Nav links — Inter by default */
 .menu__link {
   font-size: 0.82rem !important; font-weight: 400 !important;
   color: var(--ifm-color-content-secondary) !important;
   border-radius: 5px !important; padding: 5px 10px !important;
-  font-family: 'JetBrains Mono', monospace !important;
+  font-family: var(--ifm-font-family-base) !important;
   transition: all 0.12s !important;
 }
-.menu__link:hover:not(.menu__link--active) { background: rgba(99,102,241,0.07) !important; color: var(--ifm-heading-color) !important; }
-.menu__link--active { background: rgba(99,102,241,0.1) !important; color: var(--sl-accent) !important; font-weight: 600 !important; }
+.menu__link:hover:not(.menu__link--active) { background: rgba(122,90,248,0.07) !important; color: var(--ifm-heading-color) !important; }
+.menu__link--active { background: rgba(122,90,248,0.1) !important; color: var(--sl-accent) !important; font-weight: 600 !important; }
 
-/* Plain-text items (not endpoints) */
-.menu__link[href$="/overview"],.menu__link[href$="/authentication"],.menu__link[href$="/rate-limits"],
-.menu__link[href$="/quickstart"],.menu__link[href$="/event-types"],.menu__link[href$="/payloads"],
-.menu__link[href$="/signatures"],.menu__link[href$="/retry"],.menu__link[href$="/errors"],
-.menu__link[href$="/credits"],.menu__link[href$="/examples"],.menu__link[href$="/make"],.menu__link[href$="/partner"] {
-  font-family: var(--ifm-font-family-base) !important;
+/* Endpoint links (HTTP method pages) use monospace */
+.menu__link[href*="/leads/"],.menu__link[href*="/campaigns/"],
+.menu__link[href*="/webhooks/"],.menu__link[href*="/ai/"] {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-size: 0.78rem !important;
 }
 
 /* ── Content ── */
@@ -149,8 +148,8 @@ tr:last-child td { border-bottom: none !important; }
 
 /* ── Tabs ── */
 .tabs { border-bottom: 1px solid var(--ifm-toc-border-color) !important; margin-bottom: 0 !important; }
-.tabs__item { font-size: 0.8rem !important; font-weight: 500 !important; padding: 6px 14px !important; font-family: 'JetBrains Mono', monospace !important; color: var(--ifm-color-content-secondary) !important; border-bottom: 2px solid transparent !important; margin-bottom: -1px !important; }
-.tabs__item--active { color: var(--sl-accent) !important; border-bottom-color: var(--sl-accent) !important; }
+.tabs__item { font-size: 0.8rem !important; font-weight: 500 !important; padding: 6px 14px !important; font-family: var(--ifm-font-family-base) !important; color: var(--ifm-color-content-secondary) !important; border-bottom: 2px solid transparent !important; margin-bottom: -1px !important; }
+.tabs__item--active { color: var(--sl-accent) !important; border-bottom-color: var(--sl-accent) !important; font-weight: 600 !important; }
 
 /* ── Admonitions ── */
 .alert { border-radius: 8px !important; border-width: 1px !important; font-size: 0.875rem !important; }
