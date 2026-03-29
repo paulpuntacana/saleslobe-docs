@@ -61,6 +61,24 @@ p { color: var(--ifm-font-color-base); }
 .navbar__logo img { height: 34px; width: auto; }
 .navbar__items--right { gap: 8px; }
 
+/* Desktop: centered search bar */
+@media (min-width: 997px) {
+  .navbar__inner { position: relative; }
+  .navbar__search {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+  .navbar__search-input {
+    width: 340px !important;
+    height: 36px !important;
+    font-size: 0.85rem !important;
+    border-radius: 8px !important;
+    padding-left: 2.5rem !important;
+  }
+}
+
 /* Mobile: logo left, hamburger right */
 @media (max-width: 996px) {
   .navbar__inner { flex-wrap: nowrap; }
@@ -82,15 +100,27 @@ p { color: var(--ifm-font-color-base); }
   background: rgba(129,140,248,0.15) !important;
   border-color: rgba(129,140,248,0.3) !important;
 }
-.navbar-dashboard-link {
+
+.navbar-website-link {
   font-size: 0.8rem !important; font-weight: 500 !important;
   color: var(--ifm-color-content-secondary) !important;
   padding: 5px 13px !important; border-radius: 6px !important;
   border: 1px solid var(--ifm-toc-border-color) !important;
   text-decoration: none !important; transition: all 0.15s !important;
 }
-.navbar-dashboard-link:hover { color: var(--ifm-heading-color) !important; border-color: var(--ifm-color-primary) !important; }
-.navbar-dashboard-link::after { display: none !important; }
+.navbar-website-link:hover { color: var(--ifm-heading-color) !important; border-color: var(--ifm-color-primary) !important; }
+.navbar-website-link::after { display: none !important; }
+
+.navbar-app-link {
+  font-size: 0.8rem !important; font-weight: 600 !important;
+  color: #fff !important;
+  padding: 5px 14px !important; border-radius: 6px !important;
+  background: var(--sl-accent) !important;
+  border: 1px solid transparent !important;
+  text-decoration: none !important; transition: all 0.15s !important;
+}
+.navbar-app-link:hover { background: var(--ifm-color-primary-dark) !important; color: #fff !important; }
+.navbar-app-link::after { display: none !important; }
 
 /* ── Sidebar ── */
 .theme-doc-sidebar-container { border-right: 1px solid var(--ifm-toc-border-color) !important; background: var(--ifm-background-surface-color) !important; }
