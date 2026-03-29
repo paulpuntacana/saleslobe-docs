@@ -76,7 +76,18 @@ p { color: var(--ifm-font-color-base); }
     font-size: 0.85rem !important;
     border-radius: 8px !important;
   }
+  /* Dropdown: absolute so it doesn't expand the centered container (which would shift the transform) */
+  .navbar__search [class*="dropdownMenu"] {
+    position: absolute !important;
+    top: 100% !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+  }
 }
+
+/* Hide "Back to main menu" — there is no parent menu */
+.navbar-sidebar__back { display: none !important; }
 
 /* Mobile/tablet: logo left, search centered, hamburger right */
 @media (max-width: 996px) {
