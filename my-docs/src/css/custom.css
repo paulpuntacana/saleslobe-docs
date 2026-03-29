@@ -67,7 +67,8 @@ p { color: var(--ifm-font-color-base); }
   .navbar__search {
     position: absolute;
     left: 50%;
-    transform: translateX(-50%);
+    top: 50%;
+    transform: translate(-50%, -50%);
     z-index: 1;
   }
   .navbar__search-input {
