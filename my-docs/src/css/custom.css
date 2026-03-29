@@ -61,22 +61,20 @@ p { color: var(--ifm-font-color-base); }
 .navbar__logo img { height: 34px; width: auto; }
 .navbar__items--right { gap: 8px; }
 
-/* Desktop: centered search bar */
+/* Desktop: centered search bar — positioned relative to .navbar (sticky, explicit height) */
 @media (min-width: 997px) {
-  .navbar__inner { position: relative; }
   .navbar__search {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1;
+    z-index: 10;
+    margin: 0 !important;
   }
   .navbar__search-input {
     width: 340px !important;
-    height: 36px !important;
     font-size: 0.85rem !important;
     border-radius: 8px !important;
-    padding-left: 2.5rem !important;
   }
 }
 
