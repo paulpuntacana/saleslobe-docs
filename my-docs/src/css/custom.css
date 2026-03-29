@@ -78,12 +78,20 @@ p { color: var(--ifm-font-color-base); }
   }
 }
 
-/* Mobile: logo left, hamburger right */
+/* Mobile/tablet: logo left, search centered, hamburger right */
 @media (max-width: 996px) {
-  .navbar__inner { flex-wrap: nowrap; }
-  .navbar__toggle { order: 3; margin-left: 4px; }
-  .navbar__brand { order: 1; flex: 1; }
-  .navbar__items--right { order: 2; }
+  /* Reserve 52px on the right for the absolutely-positioned toggle */
+  .navbar__inner { flex-wrap: nowrap; position: relative; padding-right: 52px; }
+  .navbar__brand { flex: 1; }
+  /* Hamburger: pull out of flex flow, pin to far right */
+  .navbar__toggle { position: absolute; right: 0; top: 50%; transform: translateY(-50%); z-index: 10; }
+  /* Search: center instead of Docusaurus's default right-align */
+  .navbarSearchContainer_Bca1 {
+    left: 50% !important;
+    right: auto !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+  }
 }
 
 .navbar-version-badge {
