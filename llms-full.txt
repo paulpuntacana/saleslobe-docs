@@ -1,0 +1,688 @@
+# SalesLobe API — Complete Documentation
+
+> Full-text version for LLMs and AI assistants. For the structured link index, see https://docs.saleslobe.com/llms.txt
+> Source: https://docs.saleslobe.com | Main site: https://saleslobe.com
+
+SalesLobe is an AI-powered sales outreach platform. The SalesLobe API (v1) gives programmatic access to Corty — the built-in AI reply assistant — plus leads, campaigns, reports, and webhooks. Use it to sync CRMs, build AI-powered workflows, automate reporting, or embed Corty's intelligence into your own product.
+
+Base URL: https://slazbvfvliieskvkjtav.supabase.co/functions/v1/api-gateway
+
+Authentication: Pass your API key in the X-SalesLobe-Key header. Keys are generated in Settings → Connections → API Keys. Key prefixes: sl_live_ (production), sl_test_ (test), sl_partner_ (white-label/partner).
+
+Rate limits: 100 requests/min per key (configurable 10–2,000), 120 req/min per IP, 30s request timeout, 50KB max body.
+
+OpenAPI spec: https://docs.saleslobe.com/openapi.json — import into Cursor, Postman, or Insomnia.
+
+---
+
+## Overview
+
+URL: https://docs.saleslobe.com/
+
+Programmatic access to Corty's AI intelligence, your leads, campaigns, and reporting. Connect your CRM, automate workflows, or embed Corty into your own product.
+
+What you can build:
+- CRM sync — Push hot leads directly into HubSpot, Pipedrive, or Airtable the moment they reply
+- AI-powered workflows — Get Corty's reply suggestions in any tool via API
+- Automated reporting — Pull your Friday and Monday briefs into Slack, Notion, or email
+- White-label products — Embed Corty's AI into your own SaaS with a sl_partner_ key
+
+Current version: v1. All endpoints are prefixed /v1/.
+
+---
+
+## Quickstart
+
+URL: https://docs.saleslobe.com/getting-started/quickstart
+
+Step 1: Generate an API key
+Settings → Connections → API Keys → Generate Key. Copy it immediately — shown only once.
+
+Step 2: Make your first request
+Call /v1/suggest with a lead's reply text and receive an AI suggestion back.
+
+Step 3: Register a webhook
+Get real-time events pushed to your endpoint whenever something happens in SalesLobe.
+
+Step 4: Connect your tools
+Use Make.com, Airtable, HubSpot or any webhook-compatible platform to automate your workflow.
+
+First request example:
+curl -X POST https://<base>/v1/suggest \
+  -H "X-SalesLobe-Key: sl_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"reply_received":"Sounds interesting, tell me more","lead_name":"John"}'
+
+---
+
+## Authentication
+
+URL: https://docs.saleslobe.com/getting-started/authentication
+
+All API requests require an API key via the X-SalesLobe-Key header. Generate keys in Settings → Connections → API Keys.
+
+Keep your API key secret — never expose it client-side or in public repositories. Rotate immediately if compromised.
+
+Key types:
+- sl_live_xxxxx — Production. Full access within your configured scopes.
+- sl_test_xxxxx — Test. Test events only, no production data affected.
+- sl_partner_xxxxx — Partner. Limited to specific scopes — for white-label integrations.
+
+Scopes:
+- suggest — POST /v1/suggest, POST /v1/suggest/feedback
+- leads.read — GET /v1/leads, GET /v1/replies/:id
+- leads.write — PATCH /v1/leads/:id
+- replies.send — POST /v1/replies/:id/send
+- campaigns.read — GET /v1/campaigns
+- reports.read — GET /v1/reports, GET /v1/reports/:id
+- webhooks.manage — POST/GET/DELETE /v1/webhooks
+- * — All endpoints (default for live keys)
+
+---
+
+## Rate Limits & Security
+
+URL: https://docs.saleslobe.com/getting-started/rate-limits
+
+Per-key limits (configured when generating a key in Settings → Connections → API Keys):
+- Rate limit: 100/min default, configurable 10–2,000 requests per minute
+- Daily credit limit: 100/day default, configurable 10–10,000 AI credits per day
+
+Additional limits:
+- IP rate limit: 120 requests/min per IP — applies to all requests including unauthenticated ones. Error: ip_rate_limit_exceeded
+- Request body: Maximum 50KB. Larger payloads rejected with payload_too_large (413)
+- Timeout: 30 second hard limit per request. Long-running AI calls return ai_error if exceeded
+
+---
+
+## GET /v1/leads
+
+URL: https://docs.saleslobe.com/leads/get-leads
+
+Method: GET
+Scope: leads.read
+Credits: 0
+
+List leads with filters and pagination. Leads are aggregated from replies — one lead = unique email + campaign combination.
+
+Query parameters:
+- campaign_id (uuid) — Filter by campaign
+- classification (string) — hot, warm, cold, not_interested, ooo
+- since (ISO 8601) — Only leads with replies after this date
+- limit (integer, default 50, max 100)
+- offset (integer, default 0) — Pagination offset
+
+Response example:
+{
+  "leads": [{
+    "email": "john@acme.com",
+    "name": "John Doe",
+    "campaign_id": "abc-123",
+    "campaign_name": "Q1 SaaS Outreach",
+    "client_name": "Agency Client A",
+    "classification": "hot",
+    "reply_count": 3,
+    "last_reply_at": "2026-03-19T14:30:00Z"
+  }],
+  "count": 1,
+  "total_count": 147,
+  "limit": 20,
+  "offset": 0,
+  "has_more": true
+}
+
+---
+
+## POST /v1/leads
+
+URL: https://docs.saleslobe.com/leads/post-leads
+
+Status: 501 Not Available. Leads are synced from Smartlead; standalone creation is planned for a future release.
+
+---
+
+## GET /v1/replies/:id
+
+URL: https://docs.saleslobe.com/leads/get-reply
+
+Method: GET
+Scope: leads.read
+Credits: 0
+
+Fetch a specific reply with full thread context. Useful when an external tool or LLM needs the complete conversation history to generate a response.
+
+Path parameter: id (reply UUID)
+
+Response example:
+{
+  "reply": {
+    "id": "uuid",
+    "from_email": "john@acme.com",
+    "from_name": "John Doe",
+    "campaign_name": "Q1 SaaS Outreach",
+    "body": "Can we schedule a call?",
+    "classification": "hot",
+    "received_at": "2026-03-20T14:30:00Z"
+  },
+  "thread": [
+    { "role": "outbound", "content": "Hi John, I noticed Acme Corp is scaling...", "sent_at": "2026-03-18T09:00:00Z" },
+    { "role": "reply", "content": "Can we schedule a call?", "received_at": "2026-03-20T14:30:00Z" }
+  ],
+  "thread_length": 2
+}
+
+---
+
+## PATCH /v1/leads/:id
+
+URL: https://docs.saleslobe.com/leads/patch-lead
+
+Method: PATCH
+Scope: leads.write
+Credits: 0
+
+Update a lead's classification from an external system. Triggers a lead.updated webhook event.
+
+The :id is a reply UUID — classification updates apply to all replies from this email in the same campaign.
+
+Request body:
+{ "classification": "hot", "notes": "Spoke on phone, very interested in Q2 deal" }
+
+Response:
+{ "updated": true, "email": "john@acme.com", "classification": "hot", "updated_at": "2026-03-21T10:00:00Z" }
+
+---
+
+## POST /v1/replies/:id/send
+
+URL: https://docs.saleslobe.com/leads/send-reply
+
+Method: POST
+Scope: replies.send
+Credits: 0
+
+Approve a Corty suggestion and send it via Smartlead. Closes the loop for agencies working in Make or Slack — no need to return to the SalesLobe UI.
+
+Parameters:
+- body (string, required) — The reply text to send
+- original_suggestion (string, optional) — Corty's original suggestion — used for learning comparison
+- edited (boolean, optional) — Whether the suggestion was modified (default: false)
+
+Response:
+{ "sent": true, "to_email": "john@acme.com", "learned": true, "sent_at": "2026-03-21T10:00:00Z" }
+
+Error cases:
+- 409 already_sent — Reply has already been sent
+- 502 smartlead_error — Smartlead API call failed
+
+---
+
+## POST /v1/suggest
+
+URL: https://docs.saleslobe.com/ai/suggest
+
+Method: POST
+Scope: suggest
+Credits: 1 credit per call
+
+Ask Corty for a reply suggestion based on lead context. Corty draws from your workspace's learned tone profile and past edits to calibrate the response.
+
+Parameters:
+- reply_received (string, required) — The incoming reply from the lead
+- lead_name (string, optional) — Lead's first name for personalization
+- lead_email (string, optional) — Lead's email address
+- company (string, optional) — Lead's company name
+- campaign_context (string, optional) — Brief campaign description for context
+- medium (string, optional) — email (default), linkedin, whatsapp — influences suggestion style
+- tone (string, optional) — Desired tone override (default: professional and conversational)
+- previous_messages (array, optional) — Prior thread messages (max 10). Each needs role (outbound|reply) and content
+
+Request example:
+{
+  "reply_received": "Sounds interesting, tell me more about pricing.",
+  "lead_name": "John",
+  "lead_email": "john@acme.com",
+  "company": "Acme Corp",
+  "medium": "email",
+  "campaign_context": "B2B SaaS outreach for CRM tools",
+  "previous_messages": [
+    { "role": "outbound", "content": "Hi John, I noticed Acme Corp is scaling..." },
+    { "role": "reply", "content": "Sounds interesting, tell me more about pricing." }
+  ]
+}
+
+Response example:
+{
+  "suggestion": "Hey John, great that you're curious about pricing...",
+  "strategy": "Address pricing interest directly, propose a quick call",
+  "confidence": 0.87,
+  "medium": "email",
+  "model": "claude-sonnet-4-6",
+  "credits_used": 1,
+  "credits_remaining": 4523
+}
+
+---
+
+## POST /v1/suggest/feedback
+
+URL: https://docs.saleslobe.com/ai/feedback
+
+Method: POST
+Scope: suggest
+Credits: 0
+
+Send feedback on a Corty suggestion so the system learns. Essential for white-label partners and external tools.
+
+Note: Corty only learns if the edit is less than 80% different from the original — larger rewrites are discarded.
+
+Parameters:
+- accepted (boolean, required) — Whether the suggestion was actually used
+- original_suggestion (string, optional) — Corty's original suggestion text
+- edited_version (string, optional) — The version the user actually sent (triggers learning)
+- medium (string, optional) — email (default), linkedin, whatsapp
+- client_id (uuid, optional) — Client context for targeted learning
+- suggestion_id (string, optional) — ID of the original logged suggestion
+
+Response:
+{ "received": true, "learned": true, "medium": "email", "edit_distance": 0.23 }
+
+---
+
+## GET /v1/campaigns
+
+URL: https://docs.saleslobe.com/campaigns/campaigns
+
+Method: GET
+Scope: campaigns.read
+Credits: 0
+
+List campaigns with statistics.
+
+Query params: status (active|paused|completed), limit (default 50, max 100), offset
+
+Response example:
+{
+  "campaigns": [{
+    "id": "abc-123",
+    "name": "Q1 SaaS Outreach",
+    "status": "active",
+    "sent": 500,
+    "replied": 47,
+    "reply_rate": 9.4,
+    "open_rate": 64.0,
+    "client": { "id": "client-456", "name": "Agency Client A" },
+    "stats_last_synced_at": "2026-03-20T12:00:00Z"
+  }],
+  "count": 5,
+  "total_count": 23,
+  "has_more": false
+}
+
+---
+
+## GET /v1/reports
+
+URL: https://docs.saleslobe.com/campaigns/reports-list
+
+Method: GET
+Scope: reports.read
+Credits: 0
+
+List available reports (Friday Intelligence Briefs and Monday Briefs).
+
+Query params: type (friday|monday), limit (default 20, max 50), offset
+
+Response example:
+{
+  "reports": [{
+    "id": "uuid",
+    "title": "Friday Intelligence Brief — 21 mrt 2026",
+    "brief_type": "friday",
+    "executive_summary": "Corty improved 3 campaigns...",
+    "period_start": "2026-03-17",
+    "generated_at": "2026-03-21T17:00:00Z"
+  }],
+  "count": 1,
+  "total_count": 12,
+  "has_more": true
+}
+
+---
+
+## GET /v1/reports/:id
+
+URL: https://docs.saleslobe.com/campaigns/reports-get
+
+Method: GET
+Scope: reports.read
+Credits: 0
+
+Get a single campaign report with full metrics. Pass the report UUID as the path parameter :id.
+
+---
+
+## POST /v1/webhooks
+
+URL: https://docs.saleslobe.com/webhooks/create
+
+Method: POST
+Scope: webhooks.manage
+Credits: 0
+
+Register a webhook endpoint. A HMAC secret is auto-generated (prefix whsec_). Maximum 10 webhooks per organization.
+
+Request body:
+{
+  "name": "Make.com Lead Sync",
+  "url": "https://hook.make.com/abcdef123456",
+  "events": ["lead.replied", "reply.sent", "corty.suggested"]
+}
+
+Response (201):
+{
+  "webhook": {
+    "id": "wh-abc123",
+    "name": "Make.com Lead Sync",
+    "events": ["lead.replied", "reply.sent"],
+    "secret": "whsec_a1b2c3d4e5f6...",
+    "is_active": true,
+    "created_at": "2026-03-20T10:00:00Z"
+  }
+}
+
+---
+
+## GET /v1/webhooks
+
+URL: https://docs.saleslobe.com/webhooks/list
+
+Method: GET
+Scope: webhooks.manage
+Credits: 0
+
+List all registered webhooks for your workspace.
+
+---
+
+## DELETE /v1/webhooks/:id
+
+URL: https://docs.saleslobe.com/webhooks/delete
+
+Method: DELETE
+Scope: webhooks.manage
+Credits: 0
+
+Remove a webhook registration. Pass the webhook ID as the path parameter :id.
+
+---
+
+## Webhook Event Types
+
+URL: https://docs.saleslobe.com/webhooks/event-types
+
+All events share the same base structure: event, timestamp, workspace_id, and a data object with event-specific fields.
+
+Available events:
+- lead.created — First reply from a new email address in a campaign
+- lead.replied — Lead sends any reply in an active campaign
+- lead.bounced — Email bounced (hard or soft)
+- lead.updated — Lead classification updated via API or UI
+- reply.sent — Reply sent from SalesLobe to a lead
+- corty.suggested — Corty generates an AI reply suggestion
+- corty.learned — User edits a suggestion — Corty learns from the correction
+- report.generated — Monday Brief or Friday Report is ready
+- test.ping — Test event sent from Settings → Connections → Webhooks
+
+---
+
+## Webhook Event Payloads
+
+URL: https://docs.saleslobe.com/webhooks/payloads
+
+lead.replied payload:
+{
+  "event": "lead.replied",
+  "timestamp": "2026-03-20T14:30:00Z",
+  "workspace_id": "org-abc123",
+  "data": {
+    "reply_id": "uuid",
+    "from_email": "john@acme.com",
+    "from_name": "John Doe",
+    "campaign_id": "uuid",
+    "campaign_name": "Q1 SaaS Outreach",
+    "body": "Sounds interesting, can we schedule a call?",
+    "classification": "hot"
+  }
+}
+
+lead.created payload:
+{
+  "event": "lead.created",
+  "timestamp": "2026-03-21T10:00:00Z",
+  "workspace_id": "org-abc123",
+  "data": {
+    "from_email": "john@acme.com",
+    "from_name": "John Doe",
+    "campaign_id": "uuid",
+    "campaign_name": "Q1 SaaS Outreach",
+    "first_seen_at": "2026-03-21T10:00:00Z"
+  }
+}
+
+corty.suggested payload:
+{
+  "event": "corty.suggested",
+  "timestamp": "2026-03-20T14:30:00Z",
+  "workspace_id": "org-abc123",
+  "data": {
+    "reply_id": "uuid",
+    "from_email": "john@acme.com",
+    "campaign_id": "uuid",
+    "suggestion": "Hey John, thanks for your interest...",
+    "strategy": "Address pricing inquiry with value proposition",
+    "confidence": 0.87
+  }
+}
+
+report.generated payload:
+{
+  "event": "report.generated",
+  "timestamp": "2026-03-21T17:00:00Z",
+  "workspace_id": "org-abc123",
+  "data": {
+    "report_id": "uuid",
+    "report_type": "friday",
+    "title": "Friday Intelligence Brief — 21 mrt 2026",
+    "executive_summary": "Corty improved 3 campaigns, caught 2 issues.",
+    "period_start": "2026-03-17",
+    "period_end": "2026-03-21"
+  }
+}
+
+---
+
+## Webhook Signature Verification
+
+URL: https://docs.saleslobe.com/webhooks/signatures
+
+Every webhook request includes X-SalesLobe-Signature: sha256=<hmac>. Verify it with your webhook secret to confirm the request is genuine.
+
+Node.js verification:
+const crypto = require('crypto');
+
+function verifyWebhook(payload, signature, secret) {
+  const expected = 'sha256=' + crypto
+    .createHmac('sha256', secret)
+    .update(JSON.stringify(payload))
+    .digest('hex');
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected));
+}
+
+Python verification:
+import hmac, hashlib, json
+
+def verify_webhook(payload: dict, signature: str, secret: str) -> bool:
+    expected = 'sha256=' + hmac.new(
+        secret.encode(), json.dumps(payload).encode(), hashlib.sha256
+    ).hexdigest()
+    return hmac.compare_digest(signature, expected)
+
+---
+
+## Webhook Retry Policy
+
+URL: https://docs.saleslobe.com/webhooks/retry
+
+Retry schedule:
+- 1st retry: 1 minute after initial failure
+- 2nd retry: 5 minutes after initial failure
+- 3rd retry: 30 minutes after initial failure — final attempt
+- Auto-disable: After 10 consecutive failures across events, the webhook is deactivated. Re-enable in Settings → Connections → Webhooks.
+
+Delivery logs are retained for 30 days and visible per webhook in the Settings UI.
+
+---
+
+## Error Codes
+
+URL: https://docs.saleslobe.com/reference/errors
+
+All errors use the format: {"error": {"code": "...", "message": "..."}}
+
+Error codes:
+- missing_api_key (401) — X-SalesLobe-Key header missing
+- invalid_api_key (401) — Key not found or invalid format
+- key_disabled (403) — Key has been revoked
+- key_expired (403) — Key has expired
+- plan_required (403) — Requires Pro or Agency plan
+- scope_denied (403) — Key lacks the required scope
+- rate_limit_exceeded (429) — Too many requests per minute. Includes Retry-After header.
+- ip_rate_limit_exceeded (429) — Too many requests from this IP address
+- daily_credit_limit_exceeded (429) — Daily API credit limit reached
+- payload_too_large (413) — Request body exceeds 50KB
+- insufficient_credits (402) — Not enough neural credits
+- invalid_request (400) — Request body invalid or required field missing
+- invalid_classification (400) — Classification value not recognized
+- limit_reached (400) — Maximum number of resources reached (e.g. 10 webhooks)
+- not_found (404) — Resource not found
+- already_sent (409) — Reply has already been sent
+- not_available (501) — Endpoint not yet available
+- ai_error (502) — AI generation failed
+- smartlead_error (502) — Smartlead API call failed
+- internal_error (500) — Internal server error
+
+---
+
+## Credits & Billing
+
+URL: https://docs.saleslobe.com/reference/credits
+
+Only AI endpoints consume neural credits. Your balance is returned in every /suggest response as credits_remaining. Each API key has a configurable daily credit limit (default 100) to prevent accidental overuse.
+
+Credit costs:
+- POST /v1/suggest — 1 credit
+- All other endpoints — 0 credits
+
+---
+
+## Make.com Integration
+
+URL: https://docs.saleslobe.com/reference/make
+
+Connect SalesLobe to any tool via Make in minutes — no code required. Most Make setups take under 10 minutes. Once connected, push hot leads to HubSpot, Slack, Airtable, Notion or any of Make's 1,000+ integrations.
+
+Setup steps:
+1. Create a scenario in Make — Add Webhooks → Custom Webhook as the trigger module.
+2. Copy your Make webhook URL — Make gives you a URL like https://hook.make.com/abc123.
+3. Register in SalesLobe — Go to Settings → Connections → Webhooks → Add Webhook. Paste the URL and select your events.
+4. Send a test event — Click Test in SalesLobe. Make receives the payload and shows you the data structure to map.
+5. Add your actions — Connect Airtable, HubSpot, Slack, or Google Sheets. Map the fields from SalesLobe's payload to your destination.
+
+---
+
+## Partner / White-label API
+
+URL: https://docs.saleslobe.com/reference/partner
+
+Embed Corty's AI directly into your own product. Your users see your interface — Corty works on the backend.
+
+Contact partners@saleslobe.com for a sl_partner_ key with scoped access (typically suggest only), higher rate limits, and an isolated workspace so Corty learns from your specific use case over time.
+
+Partner integration pattern (JavaScript):
+// When a user receives a reply, call SalesLobe for an AI suggestion
+async function getCortySuggestion(lead, replyText) {
+  const res = await fetch('https://<base>/v1/suggest', {
+    method: 'POST',
+    headers: { 'X-SalesLobe-Key': 'sl_partner_xxxxxxxx', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ lead_email: lead.email, lead_name: lead.firstName,
+                           company: lead.company, reply_received: replyText })
+  });
+  const { suggestion } = await res.json();
+  return suggestion;
+}
+
+// Always send feedback so Corty learns from your use case
+async function sendFeedback(original, edited) {
+  await fetch('https://<base>/v1/suggest/feedback', {
+    method: 'POST',
+    headers: { 'X-SalesLobe-Key': 'sl_partner_xxxxxxxx', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ accepted: true, original_suggestion: original, edited_version: edited })
+  });
+}
+
+---
+
+## Code Examples
+
+URL: https://docs.saleslobe.com/reference/examples
+
+const KEY  = 'sl_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+const BASE = 'https://slazbvfvliieskvkjtav.supabase.co/functions/v1/api-gateway';
+
+// JavaScript — AI suggestion
+async function suggest(replyText, leadName, context) {
+  const res = await fetch(`${BASE}/v1/suggest`, {
+    method: 'POST',
+    headers: { 'X-SalesLobe-Key': KEY, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ reply_received: replyText, lead_name: leadName, campaign_context: context })
+  });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error.message); }
+  return res.json();
+}
+
+# Python — hot leads
+import requests
+KEY  = 'sl_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+BASE = 'https://slazbvfvliieskvkjtav.supabase.co/functions/v1/api-gateway'
+H    = {'X-SalesLobe-Key': KEY, 'Content-Type': 'application/json'}
+
+def suggest(reply, name='', context=''):
+    r = requests.post(f'{BASE}/v1/suggest', headers=H,
+                      json={'reply_received': reply, 'lead_name': name, 'campaign_context': context})
+    r.raise_for_status(); return r.json()
+
+# curl — common operations
+BASE="https://slazbvfvliieskvkjtav.supabase.co/functions/v1/api-gateway"
+KEY="sl_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# AI suggestion
+curl -X POST "$BASE/v1/suggest" \
+  -H "X-SalesLobe-Key: $KEY" -H "Content-Type: application/json" \
+  -d '{"reply_received":"Tell me more","lead_name":"John"}'
+
+# Hot leads
+curl "$BASE/v1/leads?classification=hot&limit=20" -H "X-SalesLobe-Key: $KEY"
+
+# Register webhook
+curl -X POST "$BASE/v1/webhooks" \
+  -H "X-SalesLobe-Key: $KEY" -H "Content-Type: application/json" \
+  -d '{"name":"Make.com","url":"https://hook.make.com/xyz","events":["lead.replied"]}'
+
+---
+
+## OpenAPI Specification
+
+URL: https://docs.saleslobe.com/openapi.json
+
+Machine-readable OpenAPI v3 spec. Import into Cursor, Postman, or Insomnia for autocomplete and AI-assisted development.
