@@ -61,13 +61,16 @@ p { color: var(--ifm-font-color-base); }
 .navbar__logo img { height: 34px; width: auto; }
 .navbar__items--right { gap: 8px; }
 
-/* Desktop: centered search bar — positioned relative to .navbar (sticky, explicit height) */
+/* Desktop: centered search bar — positioned absolute relative to .navbar__inner */
 @media (min-width: 997px) {
+  .navbar__inner {
+    position: relative;
+  }
   .navbar__search {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
     z-index: 10;
     margin: 0 !important;
   }

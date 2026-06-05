@@ -2,3 +2,7 @@ User-agent: *
 Allow: /
 
 Sitemap: https://docs.saleslobe.com/sitemap.xml
+
+# LLM-friendly discovery (llmstxt.org)
+LLMs: https://docs.saleslobe.com/llms.txt
+LLMs-Full: https://docs.saleslobe.com/llms-full.txt

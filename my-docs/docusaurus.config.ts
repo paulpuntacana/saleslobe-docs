@@ -34,6 +34,38 @@ const config: Config = {
       tagName: 'link',
       attributes: { rel: 'manifest', href: '/site.webmanifest' },
     },
+    {
+      tagName: 'script',
+      attributes: { type: 'application/ld+json' },
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@graph': [
+          {
+            '@type': 'Organization',
+            '@id': 'https://saleslobe.com/#organization',
+            name: 'SalesLobe',
+            url: 'https://saleslobe.com',
+            description: 'AI-powered sales outreach platform with Corty AI reply assistant, CRM sync, automated reporting, and white-label.',
+          },
+          {
+            '@type': 'WebSite',
+            '@id': 'https://docs.saleslobe.com/#website',
+            url: 'https://docs.saleslobe.com',
+            name: 'SalesLobe API Documentation',
+            description: 'Complete API reference for SalesLobe — leads, campaigns, Corty AI suggestions, webhooks, Make.com integration, and white-label partner API.',
+            publisher: { '@id': 'https://saleslobe.com/#organization' },
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: {
+                '@type': 'EntryPoint',
+                urlTemplate: 'https://docs.saleslobe.com/search?q={search_term_string}',
+              },
+              'query-input': 'required name=search_term_string',
+            },
+          },
+        ],
+      }),
+    },
   ],
 
   i18n: { defaultLocale: 'en', locales: ['en'] },
@@ -62,6 +94,12 @@ const config: Config = {
           breadcrumbs: false,
         },
         blog: false,
+        sitemap: {
+          changefreq: 'weekly' as const,
+          priority: 0.5,
+          ignorePatterns: [],
+          filename: 'sitemap.xml',
+        },
         theme: {
           customCss: './src/css/custom.css',
         },

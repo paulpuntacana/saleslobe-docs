@@ -1,0 +1,57 @@
+# SalesLobe API Documentation
+
+> SalesLobe is an AI-powered sales outreach platform. The SalesLobe API (v1) gives programmatic access to Corty — the built-in AI reply assistant — plus leads, campaigns, reports, and webhooks. Use it to sync CRMs, build AI-powered workflows, automate reporting, or embed Corty's intelligence into your own product.
+
+Base URL: `https://slazbvfvliieskvkjtav.supabase.co/functions/v1/api-gateway`
+
+Authentication: Pass your API key in the `X-SalesLobe-Key` header. Keys are generated in Settings → Connections → API Keys. Key prefixes: `sl_live_` (production), `sl_test_` (test), `sl_partner_` (white-label/partner).
+
+Rate limits: 100 requests/min per key (configurable 10–2,000), 120 req/min per IP, 30s request timeout, 50KB max body.
+
+## Getting Started
+
+- [Overview](https://docs.saleslobe.com/): What SalesLobe API is, what you can build (CRM sync, AI workflows, reporting, white-label), and the OpenAPI spec download.
+- [Quickstart](https://docs.saleslobe.com/getting-started/quickstart): Three-step guide — generate a key, call /v1/suggest, handle the response.
+- [Authentication](https://docs.saleslobe.com/getting-started/authentication): API key types, scopes table (suggest, leads.read, leads.write, replies.send, campaigns.read, reports.read, webhooks.manage), and security best practices.
+- [Rate Limits & Security](https://docs.saleslobe.com/getting-started/rate-limits): Per-key rate limits and daily credit caps, IP limits, payload and timeout limits.
+
+## Leads
+
+- [GET /v1/leads](https://docs.saleslobe.com/leads/get-leads): List leads with filters and pagination. Scope: leads.read. 0 credits. Leads are unique email + campaign combinations aggregated from replies.
+- [POST /v1/leads](https://docs.saleslobe.com/leads/post-leads): Not available (501). Leads are synced from Smartlead; standalone creation is planned for a future release.
+- [GET /v1/replies/:id](https://docs.saleslobe.com/leads/get-reply): Fetch a single reply and its full thread context. Scope: leads.read. 0 credits.
+- [PATCH /v1/leads/:id](https://docs.saleslobe.com/leads/patch-lead): Update lead fields (status, notes, custom fields). Scope: leads.write. 0 credits.
+- [POST /v1/replies/:id/send](https://docs.saleslobe.com/leads/send-reply): Send a reply on behalf of the connected mailbox. Scope: replies.send. 1 credit.
+
+## AI
+
+- [POST /v1/suggest](https://docs.saleslobe.com/ai/suggest): Ask Corty for an AI reply suggestion based on lead context. Corty uses your workspace's learned tone profile and past edits. Scope: suggest. 1 credit per call.
+- [POST /v1/suggest/feedback](https://docs.saleslobe.com/ai/feedback): Submit accept/edit/reject feedback on a suggestion to improve Corty's future responses. Scope: suggest. 0 credits.
+
+## Campaigns
+
+- [GET /v1/campaigns](https://docs.saleslobe.com/campaigns/campaigns): List all campaigns. Scope: campaigns.read. 0 credits.
+- [GET /v1/reports](https://docs.saleslobe.com/campaigns/reports-list): List campaign performance reports. Scope: reports.read. 0 credits.
+- [GET /v1/reports/:id](https://docs.saleslobe.com/campaigns/reports-get): Get a single campaign report with full metrics. Scope: reports.read. 0 credits.
+
+## Webhooks
+
+- [POST /v1/webhooks](https://docs.saleslobe.com/webhooks/create): Register a webhook endpoint to receive real-time events. Scope: webhooks.manage.
+- [GET /v1/webhooks](https://docs.saleslobe.com/webhooks/list): List all registered webhooks for your workspace. Scope: webhooks.manage.
+- [DELETE /v1/webhooks/:id](https://docs.saleslobe.com/webhooks/delete): Remove a webhook registration. Scope: webhooks.manage.
+- [Event Types](https://docs.saleslobe.com/webhooks/event-types): All available webhook events (reply.received, reply.sent, lead.status_changed, suggestion.accepted, etc.) with descriptions.
+- [Payload Structure](https://docs.saleslobe.com/webhooks/payloads): Webhook payload format — event, timestamp, workspace_id, and event-specific data object.
+- [Signature Verification](https://docs.saleslobe.com/webhooks/signatures): How to verify webhook authenticity using HMAC-SHA256 and the X-SalesLobe-Signature header.
+- [Retry Policy](https://docs.saleslobe.com/webhooks/retry): Delivery retry schedule (immediate + 5 retries over 24h), failure handling, and how to disable a webhook.
+
+## Reference
+
+- [Error Codes](https://docs.saleslobe.com/reference/errors): Full list of error codes with HTTP status and description. Errors use format `{"error":{"code":"...","message":"..."}}`.
+- [Credits](https://docs.saleslobe.com/reference/credits): How AI credits work — what consumes credits, daily limits, and how to monitor usage.
+- [Make.com Integration](https://docs.saleslobe.com/reference/make): How to connect SalesLobe to Make.com (formerly Integromat) using the HTTP module and API key.
+- [Partner / White-label](https://docs.saleslobe.com/reference/partner): Using `sl_partner_` keys to embed Corty into your own product, scope restrictions, and multi-tenant setup.
+- [Examples](https://docs.saleslobe.com/reference/examples): Code examples in cURL, Python, and JavaScript for common workflows.
+
+## Optional
+
+- [OpenAPI Spec](https://docs.saleslobe.com/openapi.json): Machine-readable OpenAPI v3 spec — import into Cursor, Postman, or Insomnia for autocomplete and AI-assisted development.
